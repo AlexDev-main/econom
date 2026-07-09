@@ -22,5 +22,13 @@ spring:
       serialization:
         INDENT_OUTPUT: true
 
-  server:
-    port: 8080
+server:
+  port: 8080
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:5t8Y!mK2#pL9xQ@vN7zR$wH3cF6jD1sA8eB4gT9uY2iP}
+    expiration: 900000
+
+  refresh-token:
+    expiration: 604800000 # 7 días

@@ -20,7 +20,9 @@ import java.util.UUID;
 @Table(name = "refresh_tokens")
 public class RefreshTokenEntity extends BaseEntity{
 
-    @Column(nullable = false, length = 255)
+    public static final int BCRYPT_HASH_LENGTH = 60;
+
+    @Column(nullable = false, length = BCRYPT_HASH_LENGTH)
     private String tokenHash;
 
     @Column(nullable = false)

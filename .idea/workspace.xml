@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a3ab004a-e686-4c42-8d08-9a028d60f80c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/authentication-service/src/main/java/com/econocom/authentication/infrastructure/persistence/repository/RefreshTokenRepositoryAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/authentication-service/src/main/java/com/econocom/authentication/infrastructure/persistence/repository/RefreshTokenRepositoryAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/authentication-service/src/main/java/com/econocom/authentication/infrastructure/security/properties/RefreshTokenProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/authentication-service/src/main/java/com/econocom/authentication/infrastructure/security/properties/RefreshTokenProperties.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

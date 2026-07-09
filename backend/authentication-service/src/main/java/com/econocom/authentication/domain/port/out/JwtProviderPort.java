@@ -6,8 +6,6 @@ public interface JwtProviderPort {
 
     String generateAccessToken(User user);
 
-    String generateRefreshToken();
-
     boolean validateToken(String token);
 
     String extractEmail(String token);

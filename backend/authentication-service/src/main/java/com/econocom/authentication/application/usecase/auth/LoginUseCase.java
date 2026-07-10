@@ -81,7 +81,7 @@ public class LoginUseCase {
 
     private TokenResponse createAuthentication(User user) {
 
-        refreshTokenRepository.revokeAllActiveByUser(user);
+        refreshTokenRepository.revokeAllActiveByUser(user.getId());
 
         String accessToken = jwtProvider.generateAccessToken(user);
 

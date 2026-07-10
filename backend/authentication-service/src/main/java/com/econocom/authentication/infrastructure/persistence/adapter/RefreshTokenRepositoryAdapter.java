@@ -21,7 +21,6 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
 
     private final RefreshTokenJpaRepository repository;
     private final RefreshTokenMapper mapper;
-    private final UserMapper userMapper;
 
     @Override
     public RefreshToken save(RefreshToken refreshToken) {
@@ -34,19 +33,9 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     }
 
     @Override
-    public List<RefreshToken> findAllByUser(User user) {
-        return repository.findAllByUser(userMapper.toEntity(user))
-                .stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
-    }
+    public void revokeAllActiveByUser(UUID userId) {
 
-    @Override
-    public void revokeAllActiveByUser(User user) {
-
-        repository.revokeAllByUser(
-                userMapper.toEntity(user)
-        );
+        repository.revokeAllActiveByUserId(userId);
 
     }
 

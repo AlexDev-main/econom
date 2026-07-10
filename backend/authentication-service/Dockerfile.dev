@@ -3,11 +3,11 @@ FROM maven:3.9.9-eclipse-temurin-8
 WORKDIR /app
 
 COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw .
 
-RUN mvn dependency:go-offline
+RUN chmod +x mvnw
 
-COPY . .
+RUN ./mvnw dependency:go-offline
 
 EXPOSE 8080
-
-CMD ["mvn","spring-boot:run"]

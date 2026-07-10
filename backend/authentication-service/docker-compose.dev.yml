@@ -57,8 +57,13 @@ services:
 
     container_name: authentication-service-dev
 
+    command: mvn spring-boot:run
+
     env_file:
       - .env
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
 
     working_dir: /app
 

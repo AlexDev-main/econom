@@ -42,14 +42,12 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     }
 
     @Override
-    public void revokeAll(User user) {
+    public void revokeAllActiveByUser(User user) {
 
-        List<RefreshTokenEntity> tokens =
-                repository.findAllByUser(userMapper.toEntity(user));
+        repository.revokeAllByUser(
+                userMapper.toEntity(user)
+        );
 
-        tokens.forEach(token -> token.setRevoked(true));
-
-        repository.saveAll(tokens);
     }
 
 }

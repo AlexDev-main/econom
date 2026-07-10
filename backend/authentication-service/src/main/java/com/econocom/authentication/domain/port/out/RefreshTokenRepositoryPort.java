@@ -15,6 +15,6 @@ public interface RefreshTokenRepositoryPort {
 
     List<RefreshToken> findAllByUser(User user);
 
-    void revokeAll(User user);
+    void revokeAllActiveByUser(User user);
 
 }

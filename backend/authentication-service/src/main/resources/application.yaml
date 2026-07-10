@@ -5,22 +5,6 @@ spring:
   profiles:
     active: dev
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-
-    show-sql: true
-
-    properties:
-      hibernate:
-        format_sql: true
-
   jackson:
     serialization:
       INDENT_OUTPUT: true
@@ -29,10 +13,6 @@ server:
   port: 8080
 
 security:
-  jwt:
-    secret: ${JWT_SECRET}
-    expiration: 900000
-
   refresh-token:
     expiration: 604800000 # 7 días
 
@@ -55,6 +35,4 @@ security:
     allow-credentials: true
 
 app:
-  admin:
-    email: ${APP_ADMIN_EMAIL}
-    password: ${APP_ADMIN_PASSWORD}
+  admin: {}

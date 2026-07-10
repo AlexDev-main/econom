@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: authentication-postgres-dev
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - authentication-network-dev
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: authentication-pgadmin-dev
+
+    restart: unless-stopped
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@econocom.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+
+    ports:
+      - "5050:80"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - authentication-network-dev
+
+  authentication-service:
+
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    container_name: authentication-service-dev
+
+    env_file:
+      - .env
+
+    working_dir: /app
+
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - authentication-network-dev
+
+volumes:
+  postgres_data_dev:
+
+networks:
+  authentication-network-dev:
+    driver: bridge

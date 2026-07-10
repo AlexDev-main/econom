@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
-import java.time.Instant;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Component
@@ -21,22 +21,24 @@ public class RefreshTokenFactory {
 
     private final PasswordEncoderPort passwordEncoder;
 
-    public RefreshToken create(User user, String tokenHash) {
+    public RefreshToken create(User user, String token) {
 
-        Instant now = Instant.now(clock);
+        LocalDateTime now = LocalDateTime.now(clock);
 
         return RefreshToken.builder()
                 .user(user)
                 .tokenHash(
-                        passwordEncoder.encode(tokenHash)
+                        passwordEncoder.encode(token)
                 )
-                .createdAt(LocalDateTime.from(now))
+                .createdAt(now)
                 .expiresAt(
-                        LocalDateTime.from(now.plusMillis(
-                                securityProperties
-                                        .getRefreshToken()
-                                        .getExpiration()
-                        ))
+                        now.plus(
+                                Duration.ofMillis(
+                                        securityProperties
+                                                .getRefreshToken()
+                                                .getExpiration()
+                                )
+                        )
                 )
                 .revoked(false)
                 .build();

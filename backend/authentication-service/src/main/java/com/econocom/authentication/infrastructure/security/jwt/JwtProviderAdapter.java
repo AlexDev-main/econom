@@ -2,7 +2,8 @@ package com.econocom.authentication.infrastructure.security.jwt;
 
 import com.econocom.authentication.domain.model.User;
 import com.econocom.authentication.domain.port.out.JwtProviderPort;
-import com.econocom.authentication.infrastructure.security.properties.JwtProperties;
+import com.econocom.authentication.domain.model.JwtPayload;
+import com.econocom.authentication.domain.model.Role;
 import com.econocom.authentication.infrastructure.security.properties.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -49,27 +50,7 @@ public class JwtProviderAdapter implements JwtProviderPort {
     }
 
     @Override
-    public boolean validateToken(String token) {
-
-        try {
-
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-
-            return true;
-
-        } catch (Exception ex) {
-
-            return false;
-
-        }
-
-    }
-
-    @Override
-    public String extractEmail(String token) {
+    public JwtPayload parseToken(String token) {
 
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -77,7 +58,12 @@ public class JwtProviderAdapter implements JwtProviderPort {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject();
+        return JwtPayload.builder()
+                .email(claims.getSubject())
+                .role(Role.valueOf(claims.get("role", String.class)))
+                .issuedAt(claims.getIssuedAt().toInstant())
+                .expiresAt(claims.getExpiration().toInstant())
+                .build();
 
     }
 

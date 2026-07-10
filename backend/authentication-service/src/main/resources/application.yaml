@@ -2,10 +2,13 @@ spring:
   application:
     name: authentication-service
 
+  profiles:
+    active: dev
+
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/authentication_db}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
     jpa:
@@ -50,3 +53,8 @@ security:
       - Content-Type
 
     allow-credentials: true
+
+app:
+  admin:
+    email: ${APP_ADMIN_EMAIL}
+    password: ${APP_ADMIN_PASSWORD}

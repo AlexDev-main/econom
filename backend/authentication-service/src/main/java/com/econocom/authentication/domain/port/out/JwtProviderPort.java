@@ -8,4 +8,6 @@ public interface JwtProviderPort {
     String generateAccessToken(User user);
 
     JwtPayload parseToken(String token);
+
+    long getAccessTokenExpiration();
 }

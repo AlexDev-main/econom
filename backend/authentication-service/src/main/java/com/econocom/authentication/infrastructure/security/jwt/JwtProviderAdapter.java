@@ -67,4 +67,9 @@ public class JwtProviderAdapter implements JwtProviderPort {
 
     }
 
+    @Override
+    public long getAccessTokenExpiration() {
+        return securityProperties.getJwt().getExpiration();
+    }
+
 }

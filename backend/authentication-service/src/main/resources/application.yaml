@@ -27,8 +27,26 @@ server:
 
 security:
   jwt:
-    secret: ${JWT_SECRET:5t8Y!mK2#pL9xQ@vN7zR$wH3cF6jD1sA8eB4gT9uY2iP}
+    secret: ${JWT_SECRET}
     expiration: 900000
 
   refresh-token:
     expiration: 604800000 # 7 días
+
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+
+    allowed-headers:
+      - Authorization
+      - Content-Type
+
+    allow-credentials: true

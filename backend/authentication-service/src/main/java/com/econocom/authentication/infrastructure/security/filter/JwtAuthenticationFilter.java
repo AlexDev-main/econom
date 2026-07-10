@@ -17,7 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -26,6 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
+
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/auth/sso",
+            "/actuator/health"
+    );
 
     private final JwtProviderPort jwtProvider;
     private final UserRepositoryPort userRepository;
@@ -96,4 +105,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+
+        String path = request.getServletPath();
+
+        return PUBLIC_PATHS.contains(path);
+
+    }
 }

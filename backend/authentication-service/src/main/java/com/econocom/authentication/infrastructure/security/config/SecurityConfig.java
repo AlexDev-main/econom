@@ -1,6 +1,6 @@
 package com.econocom.authentication.infrastructure.security.config;
 
-import com.econocom.authentication.infrastructure.security.properties.JwtProperties;
+import com.econocom.authentication.infrastructure.security.properties.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@EnableConfigurationProperties(JwtProperties.class)
+@EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityConfig {
 
     @Bean

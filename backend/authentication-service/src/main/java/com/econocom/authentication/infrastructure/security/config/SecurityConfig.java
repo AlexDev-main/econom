@@ -79,6 +79,7 @@ public class SecurityConfig {
                 .antMatchers(
                         "/api/auth/login",
                         "/api/auth/refresh",
+                        "/api/auth/logout",
                         "/api/auth/sso",
                         "/actuator/health"
                 ).permitAll()

@@ -10,6 +10,8 @@ import com.econocom.authentication.domain.port.out.RefreshTokenRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationTokenService {
@@ -26,12 +28,18 @@ public class AuthenticationTokenService {
 
         String accessToken = jwtProvider.generateAccessToken(user);
 
-        String refreshToken = refreshTokenProvider.generate();
+        String refreshTokenSecret = refreshTokenProvider.generate();
 
         RefreshToken refreshTokenEntity =
-                refreshTokenFactory.create(user.getId(), refreshToken);
+                refreshTokenFactory.create(user.getId(), refreshTokenSecret);
 
-        refreshTokenRepository.save(refreshTokenEntity);
+        RefreshToken persistedRefreshToken =
+                refreshTokenRepository.save(refreshTokenEntity);
+
+        String refreshToken = buildRefreshToken(
+                persistedRefreshToken.getId(),
+                refreshTokenSecret
+        );
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -40,6 +48,10 @@ public class AuthenticationTokenService {
                 .expiresIn(jwtProvider.getAccessTokenExpiration())
                 .build();
 
+    }
+
+    private String buildRefreshToken(UUID tokenId, String refreshTokenSecret) {
+        return tokenId + "." + refreshTokenSecret;
     }
 
 }

@@ -9,8 +9,10 @@ import com.econocom.authentication.infrastructure.persistence.repository.UserJpa
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,10 +35,23 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     }
 
     @Override
+    public List<RefreshToken> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void revokeAllActiveByUser(UUID userId) {
 
         repository.revokeAllActiveByUserId(userId);
 
+    }
+
+    @Override
+    public void revokeById(UUID id) {
+        repository.revokeById(id);
     }
 
 }

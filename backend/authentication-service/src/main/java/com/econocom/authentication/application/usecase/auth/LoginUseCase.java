@@ -2,15 +2,12 @@ package com.econocom.authentication.application.usecase.auth;
 
 import com.econocom.authentication.application.dto.auth.request.LoginRequest;
 import com.econocom.authentication.application.dto.auth.response.TokenResponse;
-import com.econocom.authentication.application.factory.RefreshTokenFactory;
+import com.econocom.authentication.application.service.auth.AuthenticationTokenService;
 import com.econocom.authentication.domain.exception.InvalidCredentialsException;
 import com.econocom.authentication.domain.exception.UserDisabledException;
 import com.econocom.authentication.domain.exception.UserNotFoundException;
-import com.econocom.authentication.domain.model.RefreshToken;
 import com.econocom.authentication.domain.model.User;
-import com.econocom.authentication.domain.port.out.JwtProviderPort;
 import com.econocom.authentication.domain.port.out.PasswordEncoderPort;
-import com.econocom.authentication.domain.port.out.RefreshTokenProviderPort;
 import com.econocom.authentication.domain.port.out.RefreshTokenRepositoryPort;
 import com.econocom.authentication.domain.port.out.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +22,9 @@ public class LoginUseCase {
 
     private final PasswordEncoderPort passwordEncoder;
 
-    private final JwtProviderPort jwtProvider;
-
-    private final RefreshTokenProviderPort refreshTokenProvider;
-
     private final RefreshTokenRepositoryPort refreshTokenRepository;
 
-    private final RefreshTokenFactory refreshTokenFactory;
+    private final AuthenticationTokenService authenticationTokenService;
 
     @Transactional
     public TokenResponse execute(LoginRequest request) {
@@ -83,23 +76,7 @@ public class LoginUseCase {
 
         refreshTokenRepository.revokeAllActiveByUser(user.getId());
 
-        String accessToken = jwtProvider.generateAccessToken(user);
-
-        String refreshToken = refreshTokenProvider.generate();
-
-        RefreshToken refreshTokenEntity =
-                refreshTokenFactory.create(user.getId(), refreshToken);
-
-        refreshTokenRepository.save(refreshTokenEntity);
-
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(
-                        jwtProvider.getAccessTokenExpiration()
-                )
-                .build();
+        return authenticationTokenService.issue(user);
 
     }
 

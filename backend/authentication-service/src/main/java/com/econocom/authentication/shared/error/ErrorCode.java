@@ -39,6 +39,12 @@ public enum ErrorCode {
         404,
                 "AUTH-006",
                 "Refresh token not found."
+    ),
+
+    REFRESH_TOKEN_EXPIRED(
+            401,
+            "AUTH-007",
+            "Refresh token has expired."
     );
 
     private final int httpStatus;

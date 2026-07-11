@@ -16,4 +16,11 @@ public interface RefreshTokenJpaRepository extends JpaRepository<RefreshTokenEnt
            "WHERE rt.user.id = :userId " +
            "AND rt.revoked = false")
     int revokeAllActiveByUserId(@Param("userId") UUID userId); //Numero de filas afectadas por la actualización
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE RefreshTokenEntity rt " +
+           "SET rt.revoked = true " +
+           "WHERE rt.id = :id " +
+           "AND rt.revoked = false")
+    int revokeById(@Param("id") UUID id);
 }

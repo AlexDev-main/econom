@@ -5,6 +5,9 @@ import com.econocom.authentication.domain.port.out.SsoStateStorePort;
 import com.econocom.authentication.infrastructure.security.properties.SecurityProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -16,11 +19,13 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.never;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,7 +68,20 @@ class SsoStateServiceTest {
 
         verify(ssoStateStorePort).save(eq(state), expirationCaptor.capture());
 
-        assertTrue(expirationCaptor.getValue().isAfter(Instant.parse("2026-01-01T00:00:00Z")));
+        assertEquals(Instant.parse("2026-01-01T00:05:00Z"), expirationCaptor.getValue());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "\t"})
+    void consumeShouldThrowWhenStateIsBlank(String state) {
+
+        assertThrows(
+                InvalidSsoStateException.class,
+                () -> ssoStateService.consume(state)
+        );
+
+        verifyNoInteractions(ssoStateStorePort);
     }
 
     @Test
@@ -75,6 +93,21 @@ class SsoStateServiceTest {
                 InvalidSsoStateException.class,
                 () -> ssoStateService.consume("invalid-state")
         );
+
+        verify(ssoStateStorePort, never()).remove("invalid-state");
+    }
+
+    @Test
+    void consumeShouldRemoveStateWhenStateExists() {
+
+        String validState = "valid-state";
+
+        when(ssoStateStorePort.exists(validState)).thenReturn(true);
+
+        ssoStateService.consume(validState);
+
+        verify(ssoStateStorePort).exists(validState);
+        verify(ssoStateStorePort).remove(validState);
     }
 
 }

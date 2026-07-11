@@ -30,6 +30,7 @@ public class RefreshToken {
 
     private LocalDateTime createdAt;
 
-    private User user;
+    private UUID userId;
 
 }
+

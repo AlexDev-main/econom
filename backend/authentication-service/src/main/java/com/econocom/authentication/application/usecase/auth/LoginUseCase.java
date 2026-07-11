@@ -88,7 +88,7 @@ public class LoginUseCase {
         String refreshToken = refreshTokenProvider.generate();
 
         RefreshToken refreshTokenEntity =
-                refreshTokenFactory.create(user, refreshToken);
+                refreshTokenFactory.create(user.getId(), refreshToken);
 
         refreshTokenRepository.save(refreshTokenEntity);
 

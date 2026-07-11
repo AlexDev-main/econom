@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  authentication-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: authentication-service-test
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+    entrypoint: []
+    depends_on: []
+    working_dir: /app
+    volumes:
+      - .:/app
+      - maven_cache_test:/root/.m2
+
+volumes:
+  maven_cache_test:
+
+

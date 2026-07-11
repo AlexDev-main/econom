@@ -81,6 +81,7 @@ public class SecurityConfig {
                         "/api/auth/refresh",
                         "/api/auth/logout",
                         "/api/auth/sso",
+                        "/api/auth/sso/callback",
                         "/actuator/health"
                 ).permitAll()
 

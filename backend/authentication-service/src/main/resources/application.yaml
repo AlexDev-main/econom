@@ -16,6 +16,14 @@ security:
   refresh-token:
     expiration: 604800000 # 7 días
 
+  sso:
+    state-expiration: 5m
+    authorization-code-expiration: 5m
+    simulated:
+      redirect-uri: http://localhost:8080/api/auth/sso/callback
+      provider: SIMULATED
+      code-prefix: sim-code-
+
   cors:
     allowed-origins:
       - http://localhost:4200

@@ -22,6 +22,9 @@ public class SecurityProperties {
     private RefreshTokenProperties refreshToken = new RefreshTokenProperties();
 
     @Valid
+    private SsoProperties sso = new SsoProperties();
+
+    @Valid
     private CorsProperties cors = new CorsProperties();
 
 }

@@ -45,6 +45,18 @@ public enum ErrorCode {
             401,
             "AUTH-007",
             "Refresh token has expired."
+    ),
+
+    INVALID_SSO_STATE(
+            401,
+            "AUTH-008",
+            "Invalid or expired SSO state."
+    ),
+
+    INVALID_SSO_CALLBACK(
+            401,
+            "AUTH-009",
+            "Invalid SSO callback."
     );
 
     private final int httpStatus;

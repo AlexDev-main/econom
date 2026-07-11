@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/refresh",
             "/api/auth/logout",
             "/api/auth/sso",
+            "/api/auth/sso/callback",
             "/actuator/health"
     );
 

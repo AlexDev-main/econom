@@ -154,7 +154,7 @@ class AuthControllerIntegrationTest {
         JsonNode body = readBody(result);
         assertFalse(body.get("success").asBoolean());
         assertEquals(403, body.get("status").asInt());
-        assertEquals("User account is disabled.", body.get("message").asText());
+        assertEquals("AUTH-003", body.get("code").asText());
     }
 
     @Test
@@ -239,6 +239,7 @@ class AuthControllerIntegrationTest {
 
         assertFalse(body.get("success").asBoolean());
         assertEquals(401, body.get("status").asInt());
+        assertEquals("AUTH-005", body.get("code").asText());
     }
 
     @Test
@@ -341,7 +342,7 @@ class AuthControllerIntegrationTest {
         JsonNode body = readBody(result);
         assertFalse(body.get("success").asBoolean());
         assertEquals(401, body.get("status").asInt());
-        assertEquals("Invalid or expired SSO state.", body.get("message").asText());
+        assertEquals("AUTH-008", body.get("code").asText());
     }
 
     @Test
@@ -378,6 +379,7 @@ class AuthControllerIntegrationTest {
 
         assertFalse(body.get("success").asBoolean());
         assertEquals(404, body.get("status").asInt());
+        assertEquals("AUTH-006", body.get("code").asText());
     }
 
     @Test
@@ -398,12 +400,18 @@ class AuthControllerIntegrationTest {
                 )
                 .andExpect(status().isOk());
 
-        mockMvc.perform(
+        MvcResult result = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+
+        JsonNode body = readBody(result);
+
+        assertFalse(body.get("success").asBoolean());
+        assertEquals("AUTH-005", body.get("code").asText());
     }
 
     @Test
@@ -424,12 +432,18 @@ class AuthControllerIntegrationTest {
                 )
                 .andExpect(status().isOk());
 
-        mockMvc.perform(
+        MvcResult result = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/refresh")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+
+        JsonNode body = readBody(result);
+
+        assertFalse(body.get("success").asBoolean());
+        assertEquals("AUTH-005", body.get("code").asText());
     }
 
     private UserEntity createUser(String email, String rawPassword, boolean enabled) {

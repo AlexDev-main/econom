@@ -35,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/logout",
             "/api/auth/sso",
             "/api/auth/sso/callback",
+            "/v3/api-docs",
+            "/v3/api-docs/swagger-config",
+            "/swagger-ui.html",
             "/actuator/health"
     );
 
@@ -112,7 +115,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        return PUBLIC_PATHS.contains(path);
+        return PUBLIC_PATHS.contains(path)
+                || path.startsWith("/swagger-ui/")
+                || path.startsWith("/v3/api-docs/");
 
     }
 }

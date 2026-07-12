@@ -82,6 +82,10 @@ public class SecurityConfig {
                         "/api/auth/logout",
                         "/api/auth/sso",
                         "/api/auth/sso/callback",
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
                         "/actuator/health"
                 ).permitAll()
 

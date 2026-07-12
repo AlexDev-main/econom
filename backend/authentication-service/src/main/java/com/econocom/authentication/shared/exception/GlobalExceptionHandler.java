@@ -4,6 +4,7 @@ import com.econocom.authentication.domain.exception.BusinessException;
 import com.econocom.authentication.shared.error.ErrorCode;
 import com.econocom.authentication.shared.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)
                 .status(errorCode.getHttpStatus())
+                .code(errorCode.getCode())
                 .message(exception.getMessage())
                 .build();
 
@@ -37,8 +39,11 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException exception) {
 
         String message = exception.getBindingResult()
-                .getFieldError()
-                .getDefaultMessage();
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse("Validation error.");
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)

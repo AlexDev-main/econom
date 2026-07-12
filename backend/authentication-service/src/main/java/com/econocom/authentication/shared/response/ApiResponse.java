@@ -24,6 +24,11 @@ public class ApiResponse<T> {
     private int status;
 
     /**
+     * Código de error
+     */
+    private String code;
+
+    /**
      * Mensaje descriptivo.
      */
     private String message;

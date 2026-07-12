@@ -105,12 +105,19 @@ class AuthControllerIntegrationTest {
 
         // Assert
         List<RefreshTokenEntity> tokens = refreshTokenJpaRepository.findAll();
-        assertEquals(2, tokens.size());
-        long revokedTokens = tokens.stream().filter(RefreshTokenEntity::isRevoked).count();
-        long activeTokens = tokens.stream().filter(token -> !token.isRevoked()).count();
 
-        assertEquals(0, revokedTokens);
-        assertEquals(2, activeTokens);
+        assertEquals(2, tokens.size());
+
+        long revokedTokens = tokens.stream()
+                .filter(RefreshTokenEntity::isRevoked)
+                .count();
+
+        long activeTokens = tokens.stream()
+                .filter(token -> !token.isRevoked())
+                .count();
+
+        assertEquals(1, revokedTokens);
+        assertEquals(1, activeTokens);
     }
 
     @Test
@@ -153,72 +160,111 @@ class AuthControllerIntegrationTest {
     @Test
     void refreshShouldRotateTokenAndPersistRotationState() throws Exception {
 
-        // Arrange
         createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
-        String firstRefreshToken = loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
 
-        // Act
-        MvcResult refreshResult = mockMvc.perform(post(AUTH_BASE_PATH + "/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"refreshToken\":\"" + firstRefreshToken + "\"}"))
-                .andExpect(status().isNotFound())
+        String firstRefreshToken =
+                loginAndExtractRefreshToken(
+                        ADMIN_EMAIL,
+                        ADMIN_PASSWORD
+                );
+
+        MvcResult refreshResult = mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/refresh")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + firstRefreshToken + "\"}")
+                )
+                .andExpect(status().isOk())
                 .andReturn();
 
-        // Assert
         JsonNode body = readBody(refreshResult);
-        assertFalse(body.get("success").asBoolean());
-        assertEquals(404, body.get("status").asInt());
-        assertEquals("Refresh token not found.", body.get("message").asText());
 
-        List<RefreshTokenEntity> persistedAfterRefresh = refreshTokenJpaRepository.findAll();
-        assertEquals(1, persistedAfterRefresh.size());
-        assertFalse(persistedAfterRefresh.get(0).isRevoked());
+        assertTrue(body.get("success").asBoolean());
+
+        String secondRefreshToken =
+                body.path("data")
+                        .path("refreshToken")
+                        .asText();
+
+        assertNotNull(secondRefreshToken);
+
+        assertFalse(firstRefreshToken.equals(secondRefreshToken));
+
+        List<RefreshTokenEntity> tokens =
+                refreshTokenJpaRepository.findAll();
+
+        assertEquals(2, tokens.size());
+
+        long revoked =
+                tokens.stream()
+                        .filter(RefreshTokenEntity::isRevoked)
+                        .count();
+
+        long active =
+                tokens.stream()
+                        .filter(token -> !token.isRevoked())
+                        .count();
+
+        assertEquals(1, revoked);
+        assertEquals(1, active);
     }
 
     @Test
-    void refreshShouldReturnUnauthorizedWhenTokenWasAlreadyRotated() throws Exception {
+    void refreshShouldRejectPreviouslyRotatedToken() throws Exception {
 
-        // Arrange
         createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
-        String refreshToken = loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
 
-        // Act
-        MvcResult secondAttempt = mockMvc.perform(post(AUTH_BASE_PATH + "/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"refreshToken\":\"" + refreshToken + "\"}"))
-                .andExpect(status().isNotFound())
-                .andReturn();
+        String oldRefreshToken =
+                loginAndExtractRefreshToken(
+                        ADMIN_EMAIL,
+                        ADMIN_PASSWORD
+                );
 
-        // Assert
+        mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/refresh")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + oldRefreshToken + "\"}")
+                )
+                .andExpect(status().isOk());
+
+        MvcResult secondAttempt =
+                mockMvc.perform(
+                                post(AUTH_BASE_PATH + "/refresh")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"refreshToken\":\"" + oldRefreshToken + "\"}")
+                        )
+                        .andExpect(status().isUnauthorized())
+                        .andReturn();
+
         JsonNode body = readBody(secondAttempt);
+
         assertFalse(body.get("success").asBoolean());
-        assertEquals(404, body.get("status").asInt());
-        assertEquals("Refresh token not found.", body.get("message").asText());
+        assertEquals(401, body.get("status").asInt());
     }
 
     @Test
     void logoutShouldRevokeRefreshToken() throws Exception {
 
-        // Arrange
         createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
-        String refreshToken = loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
 
-        // Act
-        MvcResult result = mockMvc.perform(post(AUTH_BASE_PATH + "/logout")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"refreshToken\":\"" + refreshToken + "\"}"))
-                .andExpect(status().isNotFound())
-                .andReturn();
+        String refreshToken =
+                loginAndExtractRefreshToken(
+                        ADMIN_EMAIL,
+                        ADMIN_PASSWORD
+                );
 
-        // Assert
-        JsonNode body = readBody(result);
-        assertFalse(body.get("success").asBoolean());
-        assertEquals(404, body.get("status").asInt());
-        assertEquals("Refresh token not found.", body.get("message").asText());
+        mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/logout")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + refreshToken + "\"}")
+                )
+                .andExpect(status().isOk());
 
-        List<RefreshTokenEntity> storedTokens = refreshTokenJpaRepository.findAll();
+        List<RefreshTokenEntity> storedTokens =
+                refreshTokenJpaRepository.findAll();
+
         assertEquals(1, storedTokens.size());
-        assertFalse(storedTokens.get(0).isRevoked());
+
+        assertTrue(storedTokens.get(0).isRevoked());
     }
 
     @Test
@@ -313,6 +359,79 @@ class AuthControllerIntegrationTest {
         assertEquals("Unauthorized", body.get("message").asText());
     }
 
+    @Test
+    void refreshShouldReturnNotFoundWhenTokenDoesNotExist() throws Exception {
+
+        String refreshToken =
+                UUID.randomUUID() + ".invalid-secret";
+
+        MvcResult result =
+                mockMvc.perform(
+                                post(AUTH_BASE_PATH + "/refresh")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"refreshToken\":\"" + refreshToken + "\"}")
+                        )
+                        .andExpect(status().isNotFound())
+                        .andReturn();
+
+        JsonNode body = readBody(result);
+
+        assertFalse(body.get("success").asBoolean());
+        assertEquals(404, body.get("status").asInt());
+    }
+
+    @Test
+    void logoutShouldRejectAlreadyRevokedRefreshToken() throws Exception {
+
+        createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
+
+        String refreshToken =
+                loginAndExtractRefreshToken(
+                        ADMIN_EMAIL,
+                        ADMIN_PASSWORD
+                );
+
+        mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/logout")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + refreshToken + "\"}")
+                )
+                .andExpect(status().isOk());
+
+        mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/logout")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + refreshToken + "\"}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void refreshShouldRejectRevokedTokenAfterLogout() throws Exception {
+
+        createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
+
+        String refreshToken =
+                loginAndExtractRefreshToken(
+                        ADMIN_EMAIL,
+                        ADMIN_PASSWORD
+                );
+
+        mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/logout")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + refreshToken + "\"}")
+                )
+                .andExpect(status().isOk());
+
+        mockMvc.perform(
+                        post(AUTH_BASE_PATH + "/refresh")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"refreshToken\":\"" + refreshToken + "\"}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
     private UserEntity createUser(String email, String rawPassword, boolean enabled) {
         UserEntity user = UserEntity.builder()
                 .email(email)
@@ -348,22 +467,3 @@ class AuthControllerIntegrationTest {
         return objectMapper.readTree(result.getResponse().getContentAsString());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -12,6 +12,8 @@ Lo ideal es levantar el proyecto con Docker utilizando el perfil `dev`, y luego 
 
 El proyecto también permite ejecutar los tests unitarios y de integración a través de Docker. Los comandos necesarios se encuentran al final de este documento.
 
+No olvide copiar el archivo `.env.example` a `.env` en la raiz del proyecto.
+
 ## Authentication Service
 
 Servicio de autenticacion construido con Spring Boot, JWT, rotacion de Refresh Tokens y flujo SSO simulado siguiendo arquitectura hexagonal.
@@ -373,7 +375,7 @@ docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm authent
 - Integration tests con `MockMvc` para contrato HTTP y persistencia.
 - Perfil `test` con H2 en memoria (`src/test/resources/application-test.yml`).
 
-## Decisiones de diseno
+## Decisiones de diseño
 
 - Arquitectura hexagonal para aislar dominio de frameworks.
 - Tokens stateless (JWT) para rendimiento en autenticacion de requests.

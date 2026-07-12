@@ -34,15 +34,15 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
 
 
     @Override
-    public void revokeAllActiveByUser(UUID userId) {
+    public int revokeAllActiveByUser(UUID userId) {
 
-        repository.revokeAllActiveByUserId(userId);
+        return repository.revokeAllActiveByUserId(userId);
 
     }
 
     @Override
-    public void revokeById(UUID id) {
-        repository.revokeById(id);
+    public int revokeById(UUID id) {
+        return repository.revokeById(id);
     }
 
 }

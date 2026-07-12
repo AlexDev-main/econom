@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LogoutUseCase {
 
@@ -16,7 +17,6 @@ public class LogoutUseCase {
 
     private final RefreshTokenRepositoryPort refreshTokenRepository;
 
-    @Transactional
     public void execute(RefreshTokenRequest request) {
 
         RefreshToken refreshToken =

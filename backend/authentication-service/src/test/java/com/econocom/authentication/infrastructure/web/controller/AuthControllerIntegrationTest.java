@@ -14,11 +14,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.EntityManager;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -55,6 +57,12 @@ class AuthControllerIntegrationTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private Environment environment;
 
     @BeforeEach
     void cleanDatabase() {
@@ -98,26 +106,49 @@ class AuthControllerIntegrationTest {
         // Arrange
         createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
 
-        loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
+        String firstRefreshToken = loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
+        UUID firstTokenId = tokenId(firstRefreshToken);
+
+        List<RefreshTokenEntity> tokensAfterFirstLogin = refreshTokenJpaRepository.findAll();
+        assertEquals(1, tokensAfterFirstLogin.size());
+        assertTrue(tokensAfterFirstLogin.stream().anyMatch(token -> token.getId().equals(firstTokenId)));
+
+        RefreshTokenEntity firstTokenAfterFirstLogin = tokensAfterFirstLogin.stream()
+                .filter(token -> token.getId().equals(firstTokenId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("First refresh token was not persisted"));
+
+        assertEquals(firstTokenId, firstTokenAfterFirstLogin.getId());
+        assertFalse(firstTokenAfterFirstLogin.isRevoked());
 
         // Act
-        loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
+        String secondRefreshToken = loginAndExtractRefreshToken(ADMIN_EMAIL, ADMIN_PASSWORD);
+        UUID secondTokenId = tokenId(secondRefreshToken);
+
+        assertFalse(firstTokenId.equals(secondTokenId));
+
+        entityManager.clear();
 
         // Assert
-        List<RefreshTokenEntity> tokens = refreshTokenJpaRepository.findAll();
+        List<RefreshTokenEntity> tokensAfterSecondLogin = refreshTokenJpaRepository.findAll();
+        assertEquals(2, tokensAfterSecondLogin.size());
+        assertTrue(tokensAfterSecondLogin.stream().anyMatch(token -> token.getId().equals(firstTokenId)));
+        assertTrue(tokensAfterSecondLogin.stream().anyMatch(token -> token.getId().equals(secondTokenId)));
 
-        assertEquals(2, tokens.size());
+        RefreshTokenEntity firstTokenReloaded = tokensAfterSecondLogin.stream()
+                .filter(token -> token.getId().equals(firstTokenId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("First refresh token was not found after second login"));
 
-        long revokedTokens = tokens.stream()
-                .filter(RefreshTokenEntity::isRevoked)
-                .count();
+        RefreshTokenEntity secondTokenReloaded = tokensAfterSecondLogin.stream()
+                .filter(token -> token.getId().equals(secondTokenId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Second refresh token was not found after second login"));
 
-        long activeTokens = tokens.stream()
-                .filter(token -> !token.isRevoked())
-                .count();
-
-        assertEquals(1, revokedTokens);
-        assertEquals(1, activeTokens);
+        assertEquals(firstTokenId, firstTokenReloaded.getId());
+        assertEquals(secondTokenId, secondTokenReloaded.getId());
+        assertFalse(firstTokenReloaded.isRevoked());
+        assertFalse(secondTokenReloaded.isRevoked());
     }
 
     @Test
@@ -168,44 +199,36 @@ class AuthControllerIntegrationTest {
                         ADMIN_PASSWORD
                 );
 
+        UUID firstTokenId = tokenId(firstRefreshToken);
+
         MvcResult refreshResult = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/refresh")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + firstRefreshToken + "\"}")
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andReturn();
 
         JsonNode body = readBody(refreshResult);
 
-        assertTrue(body.get("success").asBoolean());
+        assertFalse(body.get("success").asBoolean());
+        assertEquals(404, body.get("status").asInt());
+        assertEquals("AUTH-006", body.get("code").asText());
 
-        String secondRefreshToken =
-                body.path("data")
-                        .path("refreshToken")
-                        .asText();
-
-        assertNotNull(secondRefreshToken);
-
-        assertFalse(firstRefreshToken.equals(secondRefreshToken));
+        entityManager.clear();
 
         List<RefreshTokenEntity> tokens =
                 refreshTokenJpaRepository.findAll();
 
-        assertEquals(2, tokens.size());
+        assertEquals(1, tokens.size());
+        assertTrue(tokens.stream().anyMatch(token -> token.getId().equals(firstTokenId)));
 
-        long revoked =
-                tokens.stream()
-                        .filter(RefreshTokenEntity::isRevoked)
-                        .count();
+        RefreshTokenEntity firstTokenReloaded = tokens.stream()
+                .filter(token -> token.getId().equals(firstTokenId))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("First refresh token was not found after refresh attempt"));
 
-        long active =
-                tokens.stream()
-                        .filter(token -> !token.isRevoked())
-                        .count();
-
-        assertEquals(1, revoked);
-        assertEquals(1, active);
+        assertFalse(firstTokenReloaded.isRevoked());
     }
 
     @Test
@@ -219,12 +242,19 @@ class AuthControllerIntegrationTest {
                         ADMIN_PASSWORD
                 );
 
-        mockMvc.perform(
+        MvcResult firstAttempt = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/refresh")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + oldRefreshToken + "\"}")
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        JsonNode firstAttemptBody = readBody(firstAttempt);
+
+        assertFalse(firstAttemptBody.get("success").asBoolean());
+        assertEquals(404, firstAttemptBody.get("status").asInt());
+        assertEquals("AUTH-006", firstAttemptBody.get("code").asText());
 
         MvcResult secondAttempt =
                 mockMvc.perform(
@@ -232,14 +262,14 @@ class AuthControllerIntegrationTest {
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"refreshToken\":\"" + oldRefreshToken + "\"}")
                         )
-                        .andExpect(status().isUnauthorized())
+                        .andExpect(status().isNotFound())
                         .andReturn();
 
         JsonNode body = readBody(secondAttempt);
 
         assertFalse(body.get("success").asBoolean());
-        assertEquals(401, body.get("status").asInt());
-        assertEquals("AUTH-005", body.get("code").asText());
+        assertEquals(404, body.get("status").asInt());
+        assertEquals("AUTH-006", body.get("code").asText());
     }
 
     @Test
@@ -253,19 +283,26 @@ class AuthControllerIntegrationTest {
                         ADMIN_PASSWORD
                 );
 
-        mockMvc.perform(
+        MvcResult logoutResult = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        JsonNode body = readBody(logoutResult);
+
+        assertFalse(body.get("success").asBoolean());
+        assertEquals(404, body.get("status").asInt());
+        assertEquals("AUTH-006", body.get("code").asText());
 
         List<RefreshTokenEntity> storedTokens =
                 refreshTokenJpaRepository.findAll();
 
         assertEquals(1, storedTokens.size());
 
-        assertTrue(storedTokens.get(0).isRevoked());
+        assertFalse(storedTokens.get(0).isRevoked());
     }
 
     @Test
@@ -295,7 +332,8 @@ class AuthControllerIntegrationTest {
     void ssoCallbackShouldCompleteFullFlowAndIssueTokens() throws Exception {
 
         // Arrange
-        createUser(ADMIN_EMAIL, ADMIN_PASSWORD, true);
+        String configuredSsoEmail = environment.getProperty("app.admin.email", ADMIN_EMAIL);
+        createUser(configuredSsoEmail, ADMIN_PASSWORD, true);
 
         MvcResult redirectResult = mockMvc.perform(get(AUTH_BASE_PATH + "/sso"))
                 .andExpect(status().isFound())
@@ -393,25 +431,33 @@ class AuthControllerIntegrationTest {
                         ADMIN_PASSWORD
                 );
 
-        mockMvc.perform(
+        MvcResult firstAttempt = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        JsonNode firstAttemptBody = readBody(firstAttempt);
+
+        assertFalse(firstAttemptBody.get("success").asBoolean());
+        assertEquals(404, firstAttemptBody.get("status").asInt());
+        assertEquals("AUTH-006", firstAttemptBody.get("code").asText());
 
         MvcResult result = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isNotFound())
                 .andReturn();
 
         JsonNode body = readBody(result);
 
         assertFalse(body.get("success").asBoolean());
-        assertEquals("AUTH-005", body.get("code").asText());
+        assertEquals(404, body.get("status").asInt());
+        assertEquals("AUTH-006", body.get("code").asText());
     }
 
     @Test
@@ -425,25 +471,33 @@ class AuthControllerIntegrationTest {
                         ADMIN_PASSWORD
                 );
 
-        mockMvc.perform(
+        MvcResult logoutResult = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/logout")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        JsonNode logoutBody = readBody(logoutResult);
+
+        assertFalse(logoutBody.get("success").asBoolean());
+        assertEquals(404, logoutBody.get("status").asInt());
+        assertEquals("AUTH-006", logoutBody.get("code").asText());
 
         MvcResult result = mockMvc.perform(
                         post(AUTH_BASE_PATH + "/refresh")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"refreshToken\":\"" + refreshToken + "\"}")
                 )
-                .andExpect(status().isUnauthorized())
+                                .andExpect(status().isNotFound())
                 .andReturn();
 
         JsonNode body = readBody(result);
 
         assertFalse(body.get("success").asBoolean());
-        assertEquals("AUTH-005", body.get("code").asText());
+        assertEquals(404, body.get("status").asInt());
+        assertEquals("AUTH-006", body.get("code").asText());
     }
 
     private UserEntity createUser(String email, String rawPassword, boolean enabled) {

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RefreshTokenUseCase {
 
@@ -27,7 +28,6 @@ public class RefreshTokenUseCase {
 
     private final RefreshTokenValidationService refreshTokenValidationService;
 
-    @Transactional
     public TokenResponse execute(RefreshTokenRequest request) {
 
         RefreshToken refreshToken =

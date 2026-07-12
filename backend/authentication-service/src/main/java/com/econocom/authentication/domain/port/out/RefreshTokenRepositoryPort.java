@@ -12,8 +12,8 @@ public interface RefreshTokenRepositoryPort {
     Optional<RefreshToken> findById(UUID id);
 
 
-    void revokeAllActiveByUser(UUID userId);
+    int revokeAllActiveByUser(UUID userId);
 
-    void revokeById(UUID id);
+    int revokeById(UUID id);
 
 }

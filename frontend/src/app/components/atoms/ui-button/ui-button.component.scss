@@ -1,0 +1,45 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.ui-button {
+    position: relative;
+    width: 100%;
+    min-height: 48px;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: filter 0.2s ease-in-out;
+
+    &:not([disabled]):hover {
+        filter: brightness(1.06);
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+    }
+}
+
+.ui-button--stroked {
+    border-width: 2px;
+}
+
+.ui-button__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ui-button__label--hidden {
+    visibility: hidden;
+}
+
+.ui-button__spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    --mdc-circular-progress-active-indicator-color: currentColor;
+}

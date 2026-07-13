@@ -1,0 +1,57 @@
+.login-form{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+    app-ui-button {
+        display: block;
+    }
+
+    &__password-toggle {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        margin-right: 2px;
+        line-height: 36px;
+
+        &-icon {
+            width: 20px;
+            height: 20px;
+            font-size: 20px;
+            line-height: 20px;
+        }
+    }
+
+    &__sso {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+
+        &-text {
+            font-size: 1rem;
+            font-family: "Lato-Bold";
+        }
+    }
+
+    &__register {
+        text-align: center;
+        cursor: pointer;
+
+        &-link {
+            text-decoration: underline;
+            margin-left: .3rem;
+            font-family: "Lato-Bold";
+            font-size: 1rem;
+        }
+
+        &-text {
+            font-size: 1rem;
+            font-family: "Lato-Bold";
+        }
+        
+    }
+
+
+
+}

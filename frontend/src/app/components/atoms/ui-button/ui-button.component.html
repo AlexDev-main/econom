@@ -1,0 +1,47 @@
+<ng-template #buttonContent>
+    <ng-content></ng-content>
+</ng-template>
+
+<button
+    *ngIf="appearance === 'flat'"
+    mat-flat-button
+    class="ui-button ui-button--flat"
+    [color]="color"
+    [type]="type"
+    [disabled]="disabled || loading"
+    (click)="onClick()">
+
+    <mat-spinner
+        *ngIf="loading"
+        class="ui-button__spinner"
+        [strokeWidth]="3"
+        diameter="20">
+    </mat-spinner>
+
+    <span class="ui-button__label" [class.ui-button__label--hidden]="loading">
+        <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </span>
+
+</button>
+
+<button
+    *ngIf="appearance === 'stroked'"
+    mat-stroked-button
+    class="ui-button ui-button--stroked"
+    [color]="color"
+    [type]="type"
+    [disabled]="disabled || loading"
+    (click)="onClick()">
+
+    <mat-spinner
+        *ngIf="loading"
+        class="ui-button__spinner"
+        [strokeWidth]="3"
+        diameter="20">
+    </mat-spinner>
+
+    <span class="ui-button__label" [class.ui-button__label--hidden]="loading">
+        <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </span>
+
+</button>

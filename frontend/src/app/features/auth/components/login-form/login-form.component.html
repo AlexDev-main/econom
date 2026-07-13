@@ -1,0 +1,77 @@
+<form class="login-form" [formGroup]="form" (ngSubmit)="login()">
+
+    <mat-form-field appearance="outline">
+
+        <mat-label>Correo electrónico</mat-label>
+
+        <input matInput type="email" formControlName="email">
+
+        <mat-error *ngIf="form.controls.email.hasError('required')">
+
+            El correo es obligatorio
+
+        </mat-error>
+
+        <mat-error *ngIf="form.controls.email.hasError('email')">
+
+            Correo inválido
+
+        </mat-error>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+        <mat-label>Contraseña</mat-label>
+
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+
+        <button
+            mat-icon-button
+            matSuffix
+            class="login-form__password-toggle"
+            type="button"
+            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            [attr.aria-pressed]="!hidePassword"
+            (click)="hidePassword = !hidePassword">
+
+            <mat-icon class="login-form__password-toggle-icon">
+
+                {{ hidePassword ? 'visibility' : 'visibility_off' }}
+
+            </mat-icon>
+
+        </button>
+
+        <mat-error *ngIf="form.controls.password.hasError('required')">
+
+            La contraseña es obligatoria
+
+        </mat-error>
+
+    </mat-form-field>
+
+    <app-ui-button appearance="flat" color="primary" type="submit" [disabled]="form.invalid">
+
+        Iniciar sesión
+
+    </app-ui-button>
+
+    <div class="login-form__sso">
+
+        <span class="login-form__sso-text">Otras formas de acceso:</span>
+
+        <app-ui-button appearance="flat" color="accent" (clicked)="loginSSO()">
+
+            Acceder con SSO
+
+        </app-ui-button>
+
+    </div>
+
+    <div class="login-form__register">
+        <span class="login-form__register-text">¿No tienes cuenta?</span>
+        <a class="login-form__register-link" routerLink="/auth/register">Regístrate</a>
+    </div>
+
+</form>

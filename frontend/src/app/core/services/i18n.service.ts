@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, catchError, forkJoin, map, of, tap } from 
 export type AppLanguage = 'en' | 'es' | 'fr' | 'pt';
 
 const DEFAULT_LANGUAGE: AppLanguage = 'es';
+const STORAGE_LANGUAGE_KEY = 'app_language';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,8 @@ export class I18nService {
   ) {}
 
   initialize(): void {
-    this.setLanguage(DEFAULT_LANGUAGE);
+    const initialLanguage = this.readStoredLanguage() ?? DEFAULT_LANGUAGE;
+    this.setLanguage(initialLanguage);
   }
 
   setLanguage(language: string): void {
@@ -33,8 +35,13 @@ export class I18nService {
 
     forkJoin([this.loadDictionary('en'), this.loadDictionary(nextLanguage)]).subscribe(() => {
       this.currentLanguageSubject.next(nextLanguage);
+      this.persistLanguage(nextLanguage);
       this.updateDocumentMeta(nextLanguage);
     });
+  }
+
+  getCurrentLanguage(): AppLanguage {
+    return this.currentLanguageSubject.value;
   }
 
   translate(key: string): string {
@@ -76,6 +83,28 @@ export class I18nService {
 
   private isSupportedLanguage(language: string): language is AppLanguage {
     return this.availableLanguages.includes(language as AppLanguage);
+  }
+
+  private readStoredLanguage(): AppLanguage | null {
+    try {
+      const rawLanguage = localStorage.getItem(STORAGE_LANGUAGE_KEY);
+
+      if (!rawLanguage || !this.isSupportedLanguage(rawLanguage)) {
+        return null;
+      }
+
+      return rawLanguage;
+    } catch {
+      return null;
+    }
+  }
+
+  private persistLanguage(language: AppLanguage): void {
+    try {
+      localStorage.setItem(STORAGE_LANGUAGE_KEY, language);
+    } catch {
+      // no-op when localStorage is not available
+    }
   }
 
   private updateDocumentMeta(language: AppLanguage): void {

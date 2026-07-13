@@ -9,7 +9,7 @@ import { AppLanguage, I18nService } from 'src/app/core/services/i18n.service';
   styleUrls: ['./language-selector.component.scss'],
 })
 export class LanguageSelectorComponent implements OnDestroy {
-  readonly languages: readonly AppLanguage[] = ['es', 'en', 'fr', 'pt'];
+  readonly languages: readonly AppLanguage[] = this.i18nService.availableLanguages;
   selectedLanguage: AppLanguage = 'es';
 
   private readonly destroy$ = new Subject<void>();
@@ -20,6 +20,19 @@ export class LanguageSelectorComponent implements OnDestroy {
       .subscribe((language) => {
         this.selectedLanguage = language;
       });
+  }
+
+  get orderedLanguages(): AppLanguage[] {
+    const uniqueLanguages = Array.from(new Set(this.languages));
+
+    if (!uniqueLanguages.includes(this.selectedLanguage)) {
+      return ['es', ...uniqueLanguages.filter((language) => language !== 'es')];
+    }
+
+    return [
+      this.selectedLanguage,
+      ...uniqueLanguages.filter((language) => language !== this.selectedLanguage),
+    ];
   }
 
   onLanguageChange(language: string): void {

@@ -2,25 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3ab004a-e686-4c42-8d08-9a028d60f80c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app-routing.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app-routing.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/constants/api-endpoints.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/constants/api-endpoints.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/auth-routing.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/auth-routing.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/auth.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/auth.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/components/login-form/login-form.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/layouts/auth-layout/auth-layout.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/layouts/auth-layout/auth-layout.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/pages/login/login.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/pages/login/login.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/environments/environment.prod.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/environments/environment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/environments/environment.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.spec.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.spec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/layouts/protected-layout/protected-layout.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/layouts/protected-layout/protected-layout.component.spec.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -23,7 +23,17 @@ const authSessionServiceMock: Pick<
     timestamp: new Date().toISOString(),
   }),
   navigateToProtectedArea: () => undefined,
-  startSsoLogin: () => undefined,
+  startSsoLogin: () => of({
+    success: true,
+    status: 200,
+    data: {
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 900000,
+    },
+    timestamp: new Date().toISOString(),
+  }),
 };
 
 const authErrorServiceMock: Pick<AuthErrorService, 'resolveMessage'> = {

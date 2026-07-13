@@ -4,17 +4,17 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
+    loadChildren: () =>
+      import('./features/auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: '',
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

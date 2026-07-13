@@ -1,0 +1,107 @@
+.protected-home {
+  position: relative;
+  min-height: 100vh;
+  padding: clamp(1.5rem, 3vw, 3rem);
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+  overflow: hidden;
+  background: linear-gradient(140deg, #f4efe6 0%, #dce9f6 48%, #f8f3ec 100%);
+
+  &__bg {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(10px);
+    opacity: 0.45;
+    pointer-events: none;
+
+    &--one {
+      width: clamp(220px, 32vw, 380px);
+      height: clamp(220px, 32vw, 380px);
+      right: -90px;
+      top: -70px;
+      background: radial-gradient(circle, #ffb86b 0%, #ff7f5c 60%, transparent 100%);
+    }
+
+    &--two {
+      width: clamp(220px, 28vw, 320px);
+      height: clamp(220px, 28vw, 320px);
+      left: -110px;
+      bottom: -80px;
+      background: radial-gradient(circle, #4e8de8 0%, #1c4fa3 62%, transparent 100%);
+    }
+  }
+
+  &__hero {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(14, 32, 58, 0.12);
+    border-radius: 20px;
+    padding: clamp(1.2rem, 3vw, 2rem);
+    box-shadow: 0 20px 45px rgba(24, 35, 55, 0.12);
+  }
+
+  &__badge {
+    display: inline-flex;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: #0f2f57;
+    color: #f7f9fb;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-family: "Lato-Bold";
+  }
+
+  &__title {
+    margin-top: 0.9rem;
+    margin-bottom: 0.65rem;
+    color: #152238;
+    font-size: clamp(1.65rem, 4vw, 2.4rem);
+    line-height: 1.12;
+    font-family: "Lato-Bold";
+  }
+
+  &__subtitle {
+    color: #344765;
+    font-size: 1rem;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 64ch;
+  }
+
+  &__actions {
+    margin-top: 1.35rem;
+    max-width: 260px;
+  }
+
+  &__cards {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.95rem;
+  }
+
+  &__card {
+    border-radius: 16px;
+    background: rgba(10, 28, 54, 0.84);
+    color: #f5f8ff;
+    padding: 1rem;
+    border: 1px solid rgba(246, 251, 255, 0.14);
+
+    h2 {
+      margin: 0 0 0.4rem;
+      font-size: 1rem;
+      font-family: "Lato-Bold";
+    }
+
+    p {
+      margin: 0;
+      color: #d9e3f4;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+  }
+}

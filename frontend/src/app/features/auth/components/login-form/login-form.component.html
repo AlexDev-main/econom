@@ -51,11 +51,20 @@
 
     </mat-form-field>
 
-    <app-ui-button appearance="flat" color="primary" type="submit" [disabled]="form.invalid">
+    <app-ui-button
+        appearance="flat"
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || isLoading"
+        [loading]="isLoading">
 
         Iniciar sesión
 
     </app-ui-button>
+
+    <div *ngIf="authErrorMessage" class="login-form__error" role="alert" aria-live="polite">
+        {{ authErrorMessage }}
+    </div>
 
     <div class="login-form__sso">
 

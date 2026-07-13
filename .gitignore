@@ -1,1 +1,36 @@
+# Environment
 .env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.idea/
+.vscode/
+
+# Node / Angular
+**/node_modules/
+**/.angular/
+**/dist/
+**/coverage/
+npm-debug.log*
+yarn-error.log*
+
+# Java / Maven
+**/target/
+*.class
+
+# Docker and local runtime
+*.log
+*.pid
+
+# Archives and binaries
+*.zip
+*.7z
+*.tar
+*.gz
+*.jar
+*.war

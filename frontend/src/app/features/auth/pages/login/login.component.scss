@@ -1,0 +1,44 @@
+.login {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    &__card {
+
+        width: 100%;
+        max-width: 430px;
+
+    }
+
+    &__logo {
+
+        margin-bottom: 48px;
+
+        text-align: center;
+
+    }
+
+    &__header {
+
+        margin-bottom: 40px;
+
+    }
+
+    &__title {
+
+        margin-bottom: 8px;
+
+    }
+
+    &__subtitle {
+
+        margin: 0;
+
+    }
+
+}

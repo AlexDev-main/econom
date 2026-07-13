@@ -2,19 +2,19 @@
 
     <mat-form-field appearance="outline">
 
-        <mat-label>Correo electrónico</mat-label>
+        <mat-label>{{ translate('auth.login.emailLabel') }}</mat-label>
 
         <input matInput type="email" formControlName="email">
 
         <mat-error *ngIf="form.controls.email.hasError('required')">
 
-            El correo es obligatorio
+            {{ translate('auth.login.emailRequired') }}
 
         </mat-error>
 
         <mat-error *ngIf="form.controls.email.hasError('email')">
 
-            Correo inválido
+            {{ translate('auth.login.emailInvalid') }}
 
         </mat-error>
 
@@ -22,7 +22,7 @@
 
     <mat-form-field appearance="outline">
 
-        <mat-label>Contraseña</mat-label>
+        <mat-label>{{ translate('auth.login.passwordLabel') }}</mat-label>
 
         <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
 
@@ -31,7 +31,7 @@
             matSuffix
             class="login-form__password-toggle"
             type="button"
-            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            [attr.aria-label]="hidePassword ? translate('auth.login.passwordShow') : translate('auth.login.passwordHide')"
             [attr.aria-pressed]="!hidePassword"
             (click)="hidePassword = !hidePassword">
 
@@ -45,7 +45,7 @@
 
         <mat-error *ngIf="form.controls.password.hasError('required')">
 
-            La contraseña es obligatoria
+            {{ translate('auth.login.passwordRequired') }}
 
         </mat-error>
 
@@ -58,7 +58,7 @@
         [disabled]="form.invalid || isLoading"
         [loading]="isLoading">
 
-        Iniciar sesión
+        {{ translate('auth.login.submit') }}
 
     </app-ui-button>
 
@@ -68,19 +68,19 @@
 
     <div class="login-form__sso">
 
-        <span class="login-form__sso-text">Otras formas de acceso:</span>
+        <span class="login-form__sso-text">{{ translate('auth.login.ssoOtherAccess') }}</span>
 
         <app-ui-button appearance="flat" color="accent" (clicked)="loginSSO()">
 
-            Acceder con SSO
+            {{ translate('auth.login.ssoButton') }}
 
         </app-ui-button>
 
     </div>
 
     <div class="login-form__register">
-        <span class="login-form__register-text">¿No tienes cuenta?</span>
-        <a class="login-form__register-link" routerLink="/auth/register">Regístrate</a>
+        <span class="login-form__register-text">{{ translate('auth.login.noAccount') }}</span>
+        <a class="login-form__register-link" routerLink="/auth/register">{{ translate('auth.login.register') }}</a>
     </div>
 
 </form>

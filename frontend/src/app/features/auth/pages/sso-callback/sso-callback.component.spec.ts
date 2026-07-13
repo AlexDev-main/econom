@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { SsoCallbackComponent } from './sso-callback.component';
 import { AuthSessionService } from 'src/app/core/services/auth-session.service';
 import { AuthErrorService } from 'src/app/core/services/auth-error.service';
+import { I18nService } from 'src/app/core/services/i18n.service';
 
 describe('SsoCallbackComponent', () => {
   let component: SsoCallbackComponent;
@@ -36,6 +37,12 @@ describe('SsoCallbackComponent', () => {
           provide: AuthErrorService,
           useValue: {
             resolveMessage: () => 'Error',
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            translate: (key: string) => key,
           },
         },
       ],

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EMPTY, Subject, catchError, finalize, takeUntil } from 'rxjs';
 
 import { AuthErrorService } from 'src/app/core/services/auth-error.service';
+import { I18nService } from 'src/app/core/services/i18n.service';
 import { AuthSessionService } from 'src/app/core/services/auth-session.service';
 
 type SsoState = 'loading' | 'success' | 'error';
@@ -21,6 +22,7 @@ export class SsoCallbackComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly authSessionService: AuthSessionService,
     private readonly authErrorService: AuthErrorService,
+    private readonly i18nService: I18nService,
   ) {}
 
   ngOnInit(): void {
@@ -29,7 +31,7 @@ export class SsoCallbackComponent implements OnInit, OnDestroy {
 
     if (!code || !state) {
       this.state = 'error';
-      this.errorMessage = 'Respuesta SSO inválida.';
+      this.errorMessage = this.i18nService.translate('errors.auth.invalidSsoResponse');
       this.authSessionService.navigateToLogin();
       return;
     }

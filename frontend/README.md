@@ -157,12 +157,16 @@ Sistema SCSS:
 
 ## 9. Internacionalizacion (i18n)
 
-El proyecto contiene estructura para i18n en src/assets/i18n (en, es, fr, pt).
+El proyecto cuenta con i18n funcional en runtime usando un servicio propio.
 
 Estado actual:
 
-- No se observa integracion activa de libreria de traduccion en runtime.
-- Archivos de idioma presentes como base de expansion.
+- Idiomas disponibles: en, es, fr, pt (src/assets/i18n).
+- Selector de idioma implementado en el login footer.
+- Persistencia del idioma seleccionado en localStorage (app_language).
+- Fallback de traduccion a ingles cuando una clave no existe en el idioma activo.
+- Actualizacion dinamica del atributo html[lang] y del title del documento segun idioma.
+- Traducciones aplicadas en login, layout de autenticacion, footer de idioma, home protegida y mensajes de error de autenticacion/sesion.
 
 ## 10. Scripts disponibles
 
@@ -260,28 +264,26 @@ Pruebas unitarias existentes:
 Estado verificado en este repositorio:
 
 - Build: exitoso.
-- Unit tests: actualmente fallan por error de tipado en un mock de LoginFormComponent:
-	- startSsoLogin devuelve undefined en el spec, pero el contrato exige Observable<ApiResponse<TokenResponse>>.
+- Unit tests: exitosos (suite en verde).
 
 ## 15. Limitaciones y riesgos actuales
 
 - No hay script de lint configurado en package.json.
 - No hay pruebas e2e configuradas.
 - Existe un enlace de registro en la UI (/auth/register) sin ruta implementada en el modulo actual.
-- i18n no esta conectado aun al runtime de la aplicacion.
 
 ## 16. Mejores practicas y mejoras recomendadas
 
 Prioridad alta:
 
-1. Corregir mocks de tests para cumplir contratos tipados y estabilizar CI.
-2. Agregar lint (Angular ESLint) y script npm run lint.
-3. Incorporar pipeline CI con etapas minimas: install, lint, test, build, docker build.
+1. Agregar lint (Angular ESLint) y script npm run lint.
+2. Incorporar pipeline CI con etapas minimas: install, lint, test, build, docker build.
+3. Cubrir con tests unitarios el servicio i18n (fallback, persistencia y sincronizacion de metadatos).
 
 Prioridad media:
 
 1. Completar flujo de registro o retirar temporalmente enlace en UI.
-2. Integrar i18n real (por ejemplo, ngx-translate o i18n nativo Angular) con selector de idioma.
+2. Extender traducciones al resto de features futuras usando el mismo esquema de claves.
 3. Anadir pruebas de servicios clave (AuthService, AuthSessionService, JwtInterceptor).
 
 Prioridad evolutiva:
@@ -310,4 +312,4 @@ docker run --rm -p 8081:80 econom-frontend
 
 ## 19. Estado de madurez
 
-El frontend cuenta con base solida para autenticacion y despliegue contenerizado, con arquitectura modular y tipado estricto. El siguiente salto de madurez se centra en robustecer testing automatizado, linting, CI y completar funcionalidades pendientes del dominio (registro e i18n operativo).
+El frontend cuenta con base solida para autenticacion y despliegue contenerizado, con arquitectura modular, tipado estricto e internacionalizacion operativa en runtime. El siguiente salto de madurez se centra en robustecer linting, CI, cobertura de pruebas y completar funcionalidades pendientes del dominio (registro y nuevas features).

@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay
 
 import { APP_ROUTES } from '../constants/app-routes';
 import { ApiResponse } from '../models/api-response.model';
+import { I18nService } from './i18n.service';
 import { AuthService } from 'src/app/features/auth/services/auth.service';
 import { TokenStorageService } from 'src/app/features/auth/services/token-storage.service';
 import { LoginRequest, RefreshTokenRequest, TokenResponse } from 'src/app/features/auth/models';
@@ -24,6 +25,7 @@ export class AuthSessionService {
     private readonly authService: AuthService,
     private readonly tokenStorageService: TokenStorageService,
     private readonly router: Router,
+    private readonly i18nService: I18nService,
   ) {}
 
   login(payload: LoginRequest): Observable<ApiResponse<TokenResponse>> {
@@ -106,7 +108,7 @@ export class AuthSessionService {
 
     if (!refreshToken) {
       this.clearSession();
-      return throwError(() => new Error('No hay sesión activa.'));
+      return throwError(() => new Error(this.i18nService.translate('errors.auth.noActiveSession')));
     }
 
     const payload: RefreshTokenRequest = { refreshToken };
@@ -118,7 +120,7 @@ export class AuthSessionService {
         const tokenResponse = response.data;
 
         if (!tokenResponse) {
-          throw new Error('Respuesta de refresh inválida.');
+          throw new Error(this.i18nService.translate('errors.auth.invalidRefreshResponse'));
         }
 
         return tokenResponse;
@@ -136,6 +138,6 @@ export class AuthSessionService {
       return;
     }
 
-    throw new Error(response.message ?? 'Respuesta de autenticación inválida.');
+    throw new Error(response.message ?? this.i18nService.translate('errors.auth.invalidAuthResponse'));
   }
 }

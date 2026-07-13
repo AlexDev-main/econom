@@ -2,13 +2,17 @@
 
   <section class="auth-layout__left">
 
-    <img src="assets/images/login.svg" alt="Login Illustration" class="auth-layout__image" />
+    <img src="assets/images/login.svg" [attr.alt]="translate('auth.layout.illustrationAlt')" class="auth-layout__image" />
 
   </section>
 
   <section class="auth-layout__right">
 
-    <router-outlet></router-outlet>
+    <div class="auth-layout__content">
+      <router-outlet></router-outlet>
+    </div>
+
+    <app-language-footer></app-language-footer>
 
   </section>
 

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { I18nService } from './core/services/i18n.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'frontend';
+
+  constructor(private readonly i18nService: I18nService) {
+    this.i18nService.initialize();
+  }
 }

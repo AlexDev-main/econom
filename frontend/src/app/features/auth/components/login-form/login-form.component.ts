@@ -8,6 +8,7 @@ import { EMPTY, finalize, tap, catchError } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response.model';
 import { AuthErrorService } from 'src/app/core/services/auth-error.service';
 import { AuthSessionService } from 'src/app/core/services/auth-session.service';
+import { I18nService } from 'src/app/core/services/i18n.service';
 import { LoginRequest, TokenResponse } from '../../models';
 
 type LoginState = 'idle' | 'loading' | 'success' | 'error';
@@ -44,7 +45,12 @@ export class LoginFormComponent {
     private readonly fb: FormBuilder,
     private readonly authSessionService: AuthSessionService,
     private readonly authErrorService: AuthErrorService,
+    private readonly i18nService: I18nService,
   ) {}
+
+  translate(key: string): string {
+    return this.i18nService.translate(key);
+  }
 
   get isLoading(): boolean {
     return this.authState === 'loading';
@@ -130,7 +136,7 @@ export class LoginFormComponent {
       return;
     }
 
-    throw new Error(response.message ?? 'No fue posible iniciar sesión.');
+    throw new Error(response.message ?? this.i18nService.translate('errors.auth.invalidLoginResponse'));
   }
 
 }

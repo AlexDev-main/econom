@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { ApiResponse } from '../models/api-response.model';
+import { I18nService } from './i18n.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthErrorService {
+  constructor(private readonly i18nService: I18nService) {}
+
   resolveMessage(error: unknown): string {
-    const defaultMessage = 'No fue posible completar la autenticación. Inténtalo de nuevo.';
+    const defaultMessage = this.i18nService.translate('errors.auth.generic');
 
     if (error instanceof HttpErrorResponse) {
       const apiError = error.error as Partial<ApiResponse<unknown>> | null;
@@ -18,7 +21,7 @@ export class AuthErrorService {
       }
 
       if (error.status === 0) {
-        return 'No hay conexión con el servidor.';
+        return this.i18nService.translate('errors.auth.noServer');
       }
     }
 

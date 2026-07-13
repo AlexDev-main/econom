@@ -4,7 +4,7 @@
 
     <div class="login__logo">
 
-      <img src="assets/images/logos/Logo-RD.svg" alt="Login Illustration" class="auth-layout__image" />
+      <img src="assets/images/logos/Logo-RD.svg" [attr.alt]="translate('auth.layout.brandAlt')" class="auth-layout__image" />
 
     </div>
 
@@ -13,7 +13,7 @@
 
       <h1 class="login__title">
 
-        Inicia sesión en tu cuenta
+        {{ translate('auth.login.title') }}
 
       </h1>
 

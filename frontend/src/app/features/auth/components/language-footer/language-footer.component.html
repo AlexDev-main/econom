@@ -1,0 +1,24 @@
+<footer class="language-footer">
+  <div class="language-footer__left">
+    <mat-icon class="language-footer__icon" aria-hidden="true">language</mat-icon>
+
+    <span class="language-footer__label">{{ translate('auth.footer.languageLabel') }}</span>
+
+    <select
+      class="language-footer__select"
+      [value]="(currentLanguage$ | async) ?? 'es'"
+      [attr.aria-label]="translate('auth.footer.languageAriaLabel')"
+      (change)="onLanguageChange($any($event.target).value)">
+      <option
+        *ngFor="let language of languages; trackBy: trackByLanguage"
+        [value]="language">
+        {{ language | uppercase }}
+      </option>
+    </select>
+  </div>
+
+  <img
+    class="language-footer__logo"
+    src="assets/images/logos/Econocom.svg"
+    [attr.alt]="translate('auth.footer.brandAlt')" />
+</footer>

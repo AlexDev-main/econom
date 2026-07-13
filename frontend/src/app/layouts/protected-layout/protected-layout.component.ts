@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { finalize } from 'rxjs';
 
+import { I18nService } from 'src/app/core/services/i18n.service';
 import { AuthSessionService } from 'src/app/core/services/auth-session.service';
 
 @Component({
@@ -11,7 +12,14 @@ import { AuthSessionService } from 'src/app/core/services/auth-session.service';
 export class ProtectedLayoutComponent {
   isLoggingOut = false;
 
-  constructor(private readonly authSessionService: AuthSessionService) {}
+  constructor(
+    private readonly authSessionService: AuthSessionService,
+    private readonly i18nService: I18nService,
+  ) {}
+
+  translate(key: string): string {
+    return this.i18nService.translate(key);
+  }
 
   logout(): void {
     if (this.isLoggingOut) {

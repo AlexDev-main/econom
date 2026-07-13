@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { LoginFormComponent } from './login-form.component';
 import { AuthErrorService } from 'src/app/core/services/auth-error.service';
 import { AuthSessionService } from 'src/app/core/services/auth-session.service';
+import { I18nService } from 'src/app/core/services/i18n.service';
 
 const authSessionServiceMock: Pick<
   AuthSessionService,
@@ -40,6 +41,10 @@ const authErrorServiceMock: Pick<AuthErrorService, 'resolveMessage'> = {
   resolveMessage: () => 'Error',
 };
 
+const i18nServiceMock: Pick<I18nService, 'translate'> = {
+  translate: (key: string) => key,
+};
+
 describe('LoginFormComponent', () => {
   let component: LoginFormComponent;
   let fixture: ComponentFixture<LoginFormComponent>;
@@ -51,6 +56,7 @@ describe('LoginFormComponent', () => {
       providers: [
         { provide: AuthSessionService, useValue: authSessionServiceMock },
         { provide: AuthErrorService, useValue: authErrorServiceMock },
+        { provide: I18nService, useValue: i18nServiceMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     });

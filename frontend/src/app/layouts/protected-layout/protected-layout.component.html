@@ -3,11 +3,10 @@
   <div class="protected-home__bg protected-home__bg--two"></div>
 
   <section class="protected-home__hero">
-    <span class="protected-home__badge">AUTHENTICATED SESSION</span>
-    <h1 class="protected-home__title">Bienvenido al panel de control</h1>
+    <span class="protected-home__badge">{{ translate('protected.badge') }}</span>
+    <h1 class="protected-home__title">{{ translate('protected.title') }}</h1>
     <p class="protected-home__subtitle">
-      Tu sesión está activa y conectada al backend en Docker. Desde aquí puedes continuar
-      con tus flujos autenticados de manera segura.
+      {{ translate('protected.subtitle') }}
     </p>
 
     <div class="protected-home__actions">
@@ -17,23 +16,25 @@
         [loading]="isLoggingOut"
         [disabled]="isLoggingOut"
         (clicked)="logout()">
-        Cerrar sesión
+        {{ translate('protected.logout') }}
       </app-ui-button>
     </div>
   </section>
 
   <section class="protected-home__cards">
     <article class="protected-home__card">
-      <h2>Estado API</h2>
-      <p>Conectado vía /api con proxy interno del frontend en Docker.</p>
+      <h2>{{ translate('protected.cardApiTitle') }}</h2>
+      <p>{{ translate('protected.cardApiBody') }}</p>
     </article>
     <article class="protected-home__card">
-      <h2>Seguridad</h2>
-      <p>Flujo con JWT + refresh token rotation activo en el backend.</p>
+      <h2>{{ translate('protected.cardSecurityTitle') }}</h2>
+      <p>{{ translate('protected.cardSecurityBody') }}</p>
     </article>
     <article class="protected-home__card">
-      <h2>Entorno</h2>
-      <p>Orquestación completa con un solo comando desde la raíz del proyecto.</p>
+      <h2>{{ translate('protected.cardEnvironmentTitle') }}</h2>
+      <p>{{ translate('protected.cardEnvironmentBody') }}</p>
     </article>
   </section>
+
+  <app-language-footer></app-language-footer>
 </main>

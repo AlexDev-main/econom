@@ -1,0 +1,25 @@
+.language-footer {
+  margin-top: 24px;
+  padding: 10px 12px;
+  border-top: 1px solid #d6d9df;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  &__logo {
+    width: 138px;
+    max-width: 48%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .language-footer {
+    padding: 10px 8px;
+
+    &__logo {
+      width: 116px;
+    }
+  }
+}

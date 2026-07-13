@@ -1,0 +1,17 @@
+<div class="language-selector">
+  <mat-icon class="language-selector__icon" aria-hidden="true">language</mat-icon>
+
+  <span class="language-selector__label">{{ translate('auth.footer.languageLabel') }}</span>
+
+  <select
+    class="language-selector__select"
+    [value]="selectedLanguage"
+    [attr.aria-label]="translate('auth.footer.languageAriaLabel')"
+    (change)="onLanguageChange($any($event.target).value)">
+    <option
+      *ngFor="let language of languages; trackBy: trackByLanguage"
+      [value]="language">
+      {{ language | uppercase }}
+    </option>
+  </select>
+</div>

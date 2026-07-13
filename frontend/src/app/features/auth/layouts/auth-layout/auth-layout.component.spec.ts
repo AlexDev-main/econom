@@ -1,5 +1,6 @@
 /// <reference types="jasmine" />
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -22,6 +23,7 @@ describe('AuthLayoutComponent', () => {
           },
         },
       ],
+      schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(AuthLayoutComponent);
     component = fixture.componentInstance;
